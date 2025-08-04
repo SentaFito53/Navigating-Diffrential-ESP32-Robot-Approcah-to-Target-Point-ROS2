@@ -1,0 +1,4 @@
+/ros2_tcp_bridge:
+  ros__parameters:
+    vSpeed: 80
+    turnSpeed: 100

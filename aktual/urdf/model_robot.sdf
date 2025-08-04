@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+  <model name="model_robot">
+    <pose>0 0 0.05 0 0 0</pose> <!-- Spawn di atas tanah -->
+
+    <!-- Base Link -->
+    <link name="base_link">
+      <inertial>
+        <pose>0.008111 0.001249 0.041007 0 0 0</pose>
+        <mass>0.1898</mass>
+        <inertia>
+          <ixx>0.00020491</ixx>
+          <ixy>3.6538e-07</ixy>
+          <ixz>-1.3495e-05</ixz>
+          <iyy>0.00024936</iyy>
+          <iyz>9.5605e-08</iyz>
+          <izz>0.00038879</izz>
+        </inertia>
+      </inertial>
+      <visual name="base_link_visual">
+        <geometry>
+          <mesh>
+            <uri>model://urdf_model/meshes/base_link.STL</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="base_link_collision">
+        <geometry>
+          <mesh>
+            <uri>model://urdf_model/meshes/base_link.STL</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Roda Kanan -->
+    <link name="roda_kanan">
+      <pose>0.034939 0.085003 0.01425 0 0 0</pose>
+      <inertial>
+        <mass>0.029734</mass>
+        <inertia>
+          <ixx>1.2291e-05</ixx>
+          <ixy>8.982e-11</ixy>
+          <ixz>3.4873e-11</ixz>
+          <iyy>2.0379e-05</iyy>
+          <iyz>-1.0991e-12</iyz>
+          <izz>1.2291e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="roda_kanan_visual">
+        <geometry>
+          <mesh>
+            <uri>model://urdf_model/meshes/roda_kanan.STL</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="roda_kanan_collision">
+        <geometry>
+          <mesh>
+            <uri>model://urdf_model/meshes/roda_kanan.STL</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+
+    <!-- Roda Kiri -->
+    <link name="roda_kiri">
+      <pose>0.034939 -0.085003 0.01425 0 0 0</pose>
+      <inertial>
+        <mass>0.029734</mass>
+        <inertia>
+          <ixx>1.2291e-05</ixx>
+          <ixy>6.0955e-11</ixy>
+          <ixz>-1.7196e-10</ixz>
+          <iyy>2.0379e-05</iyy>
+          <iyz>6.598e-11</iyz>
+          <izz>1.2291e-05</izz>
+        </inertia>
+      </inertial>
+      <visual name="roda_kiri_visual">
+        <geometry>
+          <mesh>
+            <uri>model://urdf_model/meshes/roda_kiri.STL</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="roda_kiri_collision">
+        <geometry>
+          <mesh>
+            <uri>model://urdf_model/meshes/roda_kiri.STL</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+    </link>
+
+    <!-- Joint Roda Kanan -->
+    <joint name="joint_kanan" type="revolute">
+      <pose>0.034939 0.085003 0.01425 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>roda_kanan</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.0</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Joint Roda Kiri -->
+    <joint name="joint_kiri" type="revolute">
+      <pose>0.034939 -0.085003 0.01425 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>roda_kiri</child>
+      <axis>
+        <xyz>0 -1 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.0</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- Diff Drive Plugin -->
+    <plugin name="diff_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <remapping>cmd_vel:=/cmd_vel</remapping>
+        <remapping>odom:=/odom</remapping>
+      </ros>
+      <update_rate>50</update_rate>
+      <left_joint>joint_kiri</left_joint>
+      <right_joint>joint_kanan</right_joint>
+      <wheel_separation>0.17</wheel_separation>
+      <wheel_radius>0.035</wheel_radius>
+      <wheel_separation_multiplier>1.0</wheel_separation_multiplier>
+      <wheel_radius_multiplier>1.0</wheel_radius_multiplier>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <command_topic>/cmd_vel</command_topic>
+      <odometry_topic>/odom</odometry_topic>
+      <legacy_mode>false</legacy_mode>
+    </plugin>
+
+    <static>false</static>
+  </model>
+</sdf>
+
